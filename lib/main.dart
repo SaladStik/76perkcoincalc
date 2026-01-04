@@ -34,7 +34,8 @@ class CoinCalculatorScreen extends StatefulWidget {
 
 class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
   final TextEditingController _currentLevelController = TextEditingController();
-  final TextEditingController _availableLevelUpsController = TextEditingController();
+  final TextEditingController _availableLevelUpsController =
+      TextEditingController();
   final TextEditingController _targetCoinsController = TextEditingController();
 
   int _availableCoins = 0;
@@ -52,14 +53,17 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
 
   void _calculate() {
     final int currentLevel = int.tryParse(_currentLevelController.text) ?? 0;
-    final int availableLevelUps = int.tryParse(_availableLevelUpsController.text) ?? 0;
+    final int availableLevelUps =
+        int.tryParse(_availableLevelUpsController.text) ?? 0;
     final int targetCoins = int.tryParse(_targetCoinsController.text) ?? 0;
 
     // Coins available from level-ups (considering current level for milestone bonuses)
-    final int availableCoins = getAvailableCoins(currentLevel, availableLevelUps);
+    final int availableCoins =
+        getAvailableCoins(currentLevel, availableLevelUps);
 
     // How many MORE levels needed beyond what you have available
-    int additionalLevelsNeeded = getAdditionalLevelsNeeded(currentLevel, availableLevelUps, targetCoins);
+    int additionalLevelsNeeded =
+        getAdditionalLevelsNeeded(currentLevel, availableLevelUps, targetCoins);
     int targetLevel = currentLevel + availableLevelUps + additionalLevelsNeeded;
 
     setState(() {
@@ -78,7 +82,8 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
     super.dispose();
   }
 
-  Widget _buildInputCard(String title, TextEditingController controller, String hint, IconData icon) {
+  Widget _buildInputCard(String title, TextEditingController controller,
+      String hint, IconData icon) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -110,7 +115,8 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
   @override
   Widget build(BuildContext context) {
     final int targetCoins = int.tryParse(_targetCoinsController.text) ?? 0;
-    final bool hasEnoughCoins = _availableCoins >= targetCoins && targetCoins > 0;
+    final bool hasEnoughCoins =
+        _availableCoins >= targetCoins && targetCoins > 0;
     final bool needsMoreLevels = targetCoins > 0 && _additionalLevelsNeeded > 0;
 
     return Scaffold(
@@ -151,13 +157,18 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
                     Text(
                       'Available Coins',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimaryContainer,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer,
                           ),
                     ),
                     Text(
                       '(From ${_availableLevelUpsController.text} level-ups)',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.7),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer
+                                .withOpacity(0.7),
                           ),
                     ),
                     const SizedBox(height: 8),
@@ -167,14 +178,20 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
                         Icon(
                           Icons.monetization_on,
                           size: 40,
-                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
                         ),
                         const SizedBox(width: 8),
                         Text(
                           '$_availableCoins',
-                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineLarge
+                              ?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer,
                               ),
                         ),
                       ],
@@ -231,26 +248,31 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
                         const SizedBox(height: 12),
                         Text(
                           'You have enough coins!',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'You\'ll have $_availableCoins coins at level $_maxLevelWithLevelUps',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.white.withOpacity(0.9),
-                              ),
+                          'You have $_availableCoins coins from ${_availableLevelUpsController.text} level-ups',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.white.withOpacity(0.9),
+                                  ),
                           textAlign: TextAlign.center,
                         ),
                       ] else if (needsMoreLevels) ...[
                         Text(
-                          'Additional Levels Needed',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSecondaryContainer,
-                              ),
+                          'Additional Level-Ups Needed',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondaryContainer,
+                                  ),
                         ),
                         const SizedBox(height: 8),
                         Row(
@@ -259,36 +281,55 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
                             Icon(
                               Icons.arrow_upward,
                               size: 40,
-                              color: Theme.of(context).colorScheme.onSecondaryContainer,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSecondaryContainer,
                             ),
                             const SizedBox(width: 8),
                             Text(
                               '$_additionalLevelsNeeded',
-                              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineLarge
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.onSecondaryContainer,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondaryContainer,
                                   ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'You need to reach level $_targetLevel',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: Theme.of(context).colorScheme.onSecondaryContainer,
-                              ),
+                          'You need $_additionalLevelsNeeded more level-ups',
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondaryContainer,
+                                  ),
                         ),
                         Text(
-                          '(Current: ${_currentLevelController.text} + ${_availableLevelUpsController.text} level-ups = $_maxLevelWithLevelUps)',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSecondaryContainer.withOpacity(0.7),
-                              ),
+                          '(You have ${_availableLevelUpsController.text} level-ups, need ${int.parse(_availableLevelUpsController.text.isEmpty ? "0" : _availableLevelUpsController.text) + _additionalLevelsNeeded} total)',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondaryContainer
+                                        .withOpacity(0.7),
+                                  ),
                         ),
+                        const SizedBox(height: 8),
                         Text(
-                          'Need $_additionalLevelsNeeded more levels beyond your available level-ups',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSecondaryContainer.withOpacity(0.7),
-                              ),
+                          'You\'ll be level $_targetLevel when done',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondaryContainer
+                                        .withOpacity(0.7),
+                                  ),
                         ),
                       ],
                     ],
@@ -315,7 +356,10 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
                         const SizedBox(width: 8),
                         Text(
                           'How Coins Work',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                         ),
