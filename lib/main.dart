@@ -36,6 +36,7 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
   final TextEditingController _currentLevelController = TextEditingController();
   final TextEditingController _availableLevelUpsController =
       TextEditingController();
+  final TextEditingController _currentCoinsController = TextEditingController();
   final TextEditingController _targetCoinsController = TextEditingController();
 
   int _availableCoins = 0;
@@ -48,6 +49,7 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
     super.initState();
     _currentLevelController.text = '1';
     _availableLevelUpsController.text = '0';
+    _currentCoinsController.text = '0';
     _calculate();
   }
 
@@ -55,19 +57,37 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
     final int currentLevel = int.tryParse(_currentLevelController.text) ?? 0;
     final int availableLevelUps =
         int.tryParse(_availableLevelUpsController.text) ?? 0;
+    final int currentCoins = int.tryParse(_currentCoinsController.text) ?? 0;
     final int targetCoins = int.tryParse(_targetCoinsController.text) ?? 0;
 
     // Coins available from level-ups (considering current level for milestone bonuses)
-    final int availableCoins =
+    final int coinsFromLevelUps =
         getAvailableCoins(currentLevel, availableLevelUps);
 
+    // Total available = current coins + coins from level-ups
+    final int totalAvailableCoins = currentCoins + coinsFromLevelUps;
+
     // How many MORE levels needed beyond what you have available
-    int additionalLevelsNeeded =
-        getAdditionalLevelsNeeded(currentLevel, availableLevelUps, targetCoins);
-    int targetLevel = currentLevel + availableLevelUps + additionalLevelsNeeded;
+    int additionalLevelsNeeded = 0;
+    int targetLevel = currentLevel + availableLevelUps;
+
+    if (targetCoins > totalAvailableCoins) {
+      // Need to find how many more level-ups needed
+      int coinsStillNeeded = targetCoins - totalAvailableCoins;
+      int extraLevelUps = 0;
+      int currentMaxLevel = currentLevel + availableLevelUps;
+
+      while (coinsFromLevelRange(
+              currentMaxLevel, currentMaxLevel + extraLevelUps) <
+          coinsStillNeeded) {
+        extraLevelUps++;
+      }
+      additionalLevelsNeeded = extraLevelUps;
+      targetLevel = currentLevel + availableLevelUps + additionalLevelsNeeded;
+    }
 
     setState(() {
-      _availableCoins = availableCoins;
+      _availableCoins = totalAvailableCoins;
       _additionalLevelsNeeded = additionalLevelsNeeded;
       _targetLevel = targetLevel;
       _maxLevelWithLevelUps = currentLevel + availableLevelUps;
@@ -78,6 +98,7 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
   void dispose() {
     _currentLevelController.dispose();
     _availableLevelUpsController.dispose();
+    _currentCoinsController.dispose();
     _targetCoinsController.dispose();
     super.dispose();
   }
@@ -145,6 +166,15 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
               'How many level-ups do you have?',
               Icons.arrow_upward,
             ),
+            const SizedBox(height: 12),
+
+            // Current Perk Coins Input
+            _buildInputCard(
+              'Current Perk Coins',
+              _currentCoinsController,
+              'How many coins do you already have?',
+              Icons.monetization_on,
+            ),
             const SizedBox(height: 16),
 
             // Available Coins Display
@@ -155,7 +185,7 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
                 child: Column(
                   children: [
                     Text(
-                      'Available Coins',
+                      'Total Available Coins',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             color: Theme.of(context)
                                 .colorScheme
@@ -163,7 +193,7 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
                           ),
                     ),
                     Text(
-                      '(From ${_availableLevelUpsController.text} level-ups)',
+                      '(${_currentCoinsController.text.isEmpty ? "0" : _currentCoinsController.text} current + ${getAvailableCoins(int.tryParse(_currentLevelController.text) ?? 0, int.tryParse(_availableLevelUpsController.text) ?? 0)} from level-ups)',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Theme.of(context)
                                 .colorScheme
@@ -367,9 +397,9 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      '• You earn 2 coins per level\n'
-                      '• Bonus: +8 coins every 5 levels\n'
-                      '• Formula: (2 × level) + (8 × ⌊level/5⌋)',
+                      '• You earn 2 coins per level-up\n'
+                      '• Bonus: +8 coins when crossing levels 5, 10, 15, 20, etc.\n'
+                      '• Example: Level 3→8 crosses 5 once = (5×2) + (1×8) = 18 coins',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
