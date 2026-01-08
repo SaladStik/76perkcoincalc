@@ -83,7 +83,7 @@ class _CoinCalculatorScreenState extends State<CoinCalculatorScreen> {
         extraLevelUps++;
       }
       additionalLevelsNeeded = extraLevelUps;
-      targetLevel = currentLevel + availableLevelUps + additionalLevelsNeeded;
+      targetLevel = currentLevel + additionalLevelsNeeded;
     }
 
     setState(() {
