@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+  f76-perk-calc:
+    build: .
+    ports:
+      - "9797:80"
+    restart: unless-stopped
